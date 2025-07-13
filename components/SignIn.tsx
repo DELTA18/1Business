@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { signIn } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function SignInForm() {
   return (
