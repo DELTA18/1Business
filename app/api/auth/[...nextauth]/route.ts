@@ -29,7 +29,7 @@ const authOptions = {
       session.user.image = token.image;
       session.user.registrationCompleted = token.registrationCompleted;
 
-      console.log(session);
+      console.log(session)
       return session;
     },
 
@@ -41,5 +41,4 @@ const authOptions = {
 
 export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);
 
-// ✅ Export these so Next.js can route API calls correctly
 export const { GET, POST } = handlers;

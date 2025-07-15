@@ -7,27 +7,18 @@ export default async function Home() {
 
   return (
     <main className="flex text-amber-200 flex-col items-center justify-between p-24">
-      <h1>Home</h1>
-      <Button variant={"secondary"}>Lessgoo</Button>
+      <h1 className="text-7xl font-bold">Home</h1>
 
       {session ? (
         <>
           <p className="text-4xl text-green-600 p-3">
             Signed in as {session.user?.email}
           </p>
-          <p className="text-4xl text-green-600 p-3">{session.user?.name}</p>
+          <p className="text-4xl text-green-600 font-bold p-3">Welcome, {session.user?.name}</p>
         </>
       ) : (
         <>
           <p>Not signed in</p>
-          <form
-            action={async () => {
-              "use server";
-              await signIn("google");
-            }}
-          >
-            <button type="submit">Signin with Google</button>
-          </form>
         </>
       )}
     </main>
