@@ -17,15 +17,12 @@ export default function RegisterStep1() {
   const [profilePic, setProfilePic] = useState("");
   const [location, setLocation] = useState("");
   const [socialLinks, setSocialLinks] = useState<string[]>([""]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (status === "loading") return;
-    if (!session) {
-      router.push("/");
-    }
-    if (session?.user?.registrationCompleted) {
-      router.push("/dashboard");
-    }
+    if (!session) router.push("/");
+    if (session?.user?.registrationCompleted) router.push("/");
   }, [session, status, router]);
 
   const addSocialLink = () => {
@@ -38,17 +35,33 @@ export default function RegisterStep1() {
     setSocialLinks(updatedLinks);
   };
 
-  const handleContinue = () => {
-    // Build query string to pass data to step2
-    const params = new URLSearchParams({
-      phone,
-      bio,
-      profilePic,
-      location,
-      socialLinks: JSON.stringify(socialLinks),
+  const handleContinue = async () => {
+    if (!session?.user?.email) return;
+    setLoading(true);
+
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: session.user.email,
+        phone,
+        bio,
+        profilePic,
+        location,
+        socialLinks,
+      }),
     });
 
-    router.push(`/register/step2?${params.toString()}`);
+    const data = await res.json();
+    setLoading(false);
+
+    if (data.success) {
+      router.push("/");
+    } else {
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -124,8 +137,8 @@ export default function RegisterStep1() {
       </div>
 
       {/* Continue */}
-      <Button className="w-full mt-4" onClick={handleContinue}>
-        Continue
+      <Button className="w-full mt-4" onClick={handleContinue} disabled={loading}>
+        {loading ? "Saving..." : "Continue"}
       </Button>
     </div>
   );

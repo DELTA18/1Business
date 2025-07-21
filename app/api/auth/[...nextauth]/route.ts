@@ -1,8 +1,11 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import prisma from "@/lib/prisma";
+import dbConnect from "@/lib/mongoose";
+import User from "@/models/User";
 
 const authOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -12,14 +15,43 @@ const authOptions = {
 
   callbacks: {
     async jwt({ token, account, profile }) {
-      if (account && profile) {
-        token.googleId = account.providerAccountId;
-        token.name = profile.name;
-        token.email = profile.email;
-        token.image = profile.picture;
-        token.registrationCompleted = false;
+      try {
+        if (account && profile) {
+          console.log("🔄 Google login attempt:", profile.email);
+          await dbConnect();
+
+          const existingUser = await User.findOne({ email: profile.email });
+
+          if (!existingUser) {
+            console.log("🆕 Creating new user:", profile.email);
+            await User.create({
+              googleId: account.providerAccountId,
+              name: profile.name,
+              email: profile.email,
+              image: profile.picture,
+              registrationCompleted: false,
+            });
+          }
+
+          token.email = profile.email;
+        }
+
+        // Always fetch latest user data
+        await dbConnect();
+        const user = await User.findOne({ email: token.email });
+
+        if (user) {
+          token.registrationCompleted = user.registrationCompleted;
+          token.name = user.name;
+          token.image = user.image;
+          token.googleId = user.googleId;
+        }
+
+        return token;
+      } catch (err) {
+        console.error("❌ Error in jwt callback:", err);
+        throw err;
       }
-      return token;
     },
 
     async session({ session, token }) {
@@ -28,17 +60,18 @@ const authOptions = {
       session.user.email = token.email;
       session.user.image = token.image;
       session.user.registrationCompleted = token.registrationCompleted;
-
-      console.log(session)
       return session;
     },
 
-    async redirect({ url, baseUrl }) {
+    async redirect({ baseUrl }) {
       return `${baseUrl}/register/step1`;
     },
   },
 };
 
-export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);
-
-export const { GET, POST } = handlers;
+export const {
+  handlers: { GET, POST },
+  auth,
+  signIn,
+  signOut,
+} = NextAuth(authOptions);
