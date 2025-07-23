@@ -5,7 +5,6 @@ import User from "@/models/User";
 
 const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,

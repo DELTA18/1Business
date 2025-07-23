@@ -1,5 +1,7 @@
 import { auth } from "./api/auth/[...nextauth]/route";
 import Image from "next/image";
+import CreatePost from "@/components/CreatePost";
+
 
 export default async function Home() {
   const session = await auth();
@@ -19,12 +21,9 @@ export default async function Home() {
         <>
           <p className="text-2xl text-green-500">Signed in as {session.user?.email}</p>
           <p className="text-2xl font-bold text-green-600">Welcome, {session.user?.name}</p>
-        </>
-      ) : (
-        <p className="text-lg text-red-500">Not signed in</p>
-      )}
 
-      <section className="mt-10 w-full max-w-4xl">
+          <CreatePost />
+          <section className="mt-10 w-full max-w-4xl">
         <h2 className="text-3xl font-semibold text-white mb-6">All Registered Users:</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
           {users.map((user: any) => (
@@ -44,6 +43,12 @@ export default async function Home() {
           ))}
         </div>
       </section>
+        </>
+      ) : (
+        <p className="text-lg text-red-500">Not signed in</p>
+      )}
+
+      
     </main>
   );
 }

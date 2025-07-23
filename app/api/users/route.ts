@@ -4,7 +4,7 @@ import User from '@/models/User';
 
 export async function GET(req: NextRequest) {
     try {
-        await dbConnect();
+        // await dbConnect();
         const users = await User.find({ registrationCompleted: true });
         return NextResponse.json({ success: true, users });
     } catch (error) {
