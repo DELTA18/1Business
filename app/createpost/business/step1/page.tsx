@@ -15,15 +15,23 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-
 import { useRouter } from "next/navigation";
 
+import { useBusinessPostStore } from "@/stores/userBusinessPostStore";
+
 export default function BusinessStep1Form() {
+  const router = useRouter();
+  const { setStep1Data } = useBusinessPostStore();
+
+  // Form state
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [businessType, setBusinessType] = useState(""); // Ideally passed from ComboboxDemo
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [stage, setStage] = useState("");
+  const [timeline, setTimeline] = useState("");
 
-    const router = useRouter();
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -34,7 +42,19 @@ export default function BusinessStep1Form() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // submit logic
+
+    // 💾 Save to Zustand
+    setStep1Data({
+      name,
+      description,
+      businessType,
+      image,
+      stage,
+      launchTimeline: timeline,
+    });
+
+    // 🚀 Go to Step 2
+    router.push("/createpost/business/step2");
   };
 
   return (
@@ -62,38 +82,39 @@ export default function BusinessStep1Form() {
           </div>
 
           {/* Field: Business Name */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="space-y-2 transition-all"
-          >
+          <div className="space-y-2">
             <Label htmlFor="name">Business Name</Label>
             <Input
               id="name"
               name="name"
               placeholder="e.g. CloudEats, InstaFix"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="focus-visible:ring-2 focus-visible:ring-pink-400 shadow-md"
             />
-          </motion.div>
+          </div>
 
           {/* Field: Description */}
-          <motion.div whileHover={{ scale: 1.02 }} className="space-y-2">
+          <div className="space-y-2">
             <Label htmlFor="desc">Description</Label>
             <Textarea
               id="desc"
               name="description"
               placeholder="Give a quick overview of what your business does..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="focus-visible:ring-2 focus-visible:ring-blue-400 shadow-md"
             />
-          </motion.div>
+          </div>
 
-          {/* Field: Type */}
-          <motion.div whileHover={{ scale: 1.02 }} className="space-y-2">
+          {/* Field: Type (To do: hook up state with Combobox) */}
+          <div className="space-y-2">
             <Label>Business Type</Label>
-            <ComboboxDemo />
-          </motion.div>
+            <ComboboxDemo value={businessType} onChange={setBusinessType} /> {/* <-- Modify your Combobox to accept onChange */}
+          </div>
 
           {/* Image Upload */}
-          <motion.div whileHover={{ scale: 1.02 }} className="space-y-3">
+          <div className="space-y-3">
             <Label>Business Image</Label>
             <Input type="file" accept="image/*" onChange={handleImageChange} />
             {imagePreview && (
@@ -105,12 +126,12 @@ export default function BusinessStep1Form() {
                 className="rounded-2xl shadow-md mt-2 border border-gray-200"
               />
             )}
-          </motion.div>
+          </div>
 
           {/* Stage Select */}
-          <motion.div whileHover={{ scale: 1.02 }} className="space-y-2">
+          <div className="space-y-2">
             <Label>Stage of Business</Label>
-            <Select>
+            <Select onValueChange={(val) => setStage(val)}>
               <SelectTrigger className="focus:ring-2 focus:ring-indigo-400 shadow-md">
                 <SelectValue placeholder="Choose your stage" />
               </SelectTrigger>
@@ -121,12 +142,12 @@ export default function BusinessStep1Form() {
                 <SelectItem value="launched">Already Launched</SelectItem>
               </SelectContent>
             </Select>
-          </motion.div>
+          </div>
 
           {/* Timeline Select */}
-          <motion.div whileHover={{ scale: 1.02 }} className="space-y-2">
+          <div className="space-y-2">
             <Label>Launch Timeline</Label>
-            <Select>
+            <Select onValueChange={(val) => setTimeline(val)}>
               <SelectTrigger className="focus:ring-2 focus:ring-pink-400 shadow-md">
                 <SelectValue placeholder="When will you launch?" />
               </SelectTrigger>
@@ -137,14 +158,13 @@ export default function BusinessStep1Form() {
                 <SelectItem value="never">Not sure</SelectItem>
               </SelectContent>
             </Select>
-          </motion.div>
+          </div>
 
           {/* Submit Button */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
             <Button
               type="submit"
               className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:brightness-110 hover:shadow-2xl transition-all group"
-              onClick={() => router.push("/createpost/business/step2")}
             >
               Continue
               <span className="ml-2 group-hover:ml-3 transition-all">→</span>
