@@ -3,9 +3,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signIn, signOut } from 'next-auth/react'
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
 
 export default function Navbar() {
   const pathname = usePathname()
+  const [open, setOpen] = useState(false)
 
   const navItems = [
     { label: 'Home', href: '/' },
@@ -14,49 +17,58 @@ export default function Navbar() {
     { label: 'Contact', href: '/contact' },
   ]
 
-  const session: Session | null = null
   return (
-    <nav className="w-full bg-white shadow-sm fixed top-0 left-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 w-full z-50  backdrop-blur-2xl border-b border-white/20 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-blue-600">
+        <Link href="/" className="text-3xl font-extrabold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent tracking-tight">
           1Business
         </Link>
 
-        {/* Nav Links */}
-        <div className="flex space-x-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`text-gray-700 hover:text-blue-600 transition ${
-                pathname === item.href ? 'font-semibold text-blue-600' : ''
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+        {/* Hamburger */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setOpen(!open)}
+            className="text-white focus:outline-none"
+          >
+            {open ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
 
-        {/* Auth buttons */}
-        <div className="space-x-4">
-          <Link
-            href="/login"
-            className="text-gray-700 hover:text-blue-600 transition"
-          >
-            Login
-          </Link>
-          <button
-            onClick={() => signIn('google')}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            Sign in with Google
-          </button>
+        {/* Links */}
+        <div
+          className={`flex flex-col md:flex-row items-center gap-6 md:gap-8 absolute md:static top-[72px] left-0 w-full md:w-auto bg-white/10 md:bg-transparent backdrop-blur-2xl md:backdrop-blur-0 border-t md:border-none border-white/10 px-6 py-6 md:p-0 transition-all duration-300 ease-in-out ${
+            open ? 'flex' : 'hidden md:flex'
+          }`}
+        >
+          {navItems.map(({ label, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`text-lg font-medium text-white hover:text-cyan-400 transition duration-200 ${
+                pathname === href ? 'text-cyan-400 font-semibold' : ''
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
 
-          <button
-            onClick={() => signOut()}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-          >Signout </button>
+          {/* Auth */}
+          <div className="flex flex-col md:flex-row gap-4 md:ml-6 mt-4 md:mt-0 w-full md:w-auto">
+            
+            <button
+              onClick={() => signIn('google')}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium px-5 py-2 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition transform duration-200"
+            >
+              Sign in with Google
+            </button>
+            <button
+              onClick={() => signOut()}
+              className="bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium px-5 py-2 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition transform duration-200"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </div>
     </nav>
