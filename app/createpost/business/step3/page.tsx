@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useBusinessPostStore } from "@/stores/userBusinessPostStore";
@@ -11,110 +12,97 @@ export default function ReviewPostPage() {
   const { step1Data, step2Data } = useBusinessPostStore();
 
   const handleSubmit = async () => {
-      const postData = {
-        ...step1Data,
-        ...step2Data,
-      };
-
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postData),
-      });
-
-      const result = await res.json();
-      console.log(result);
+    const postData = {
+      ...step1Data,
+      ...step2Data,
     };
 
+    const res = await fetch("/api/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(postData),
+    });
+
+    const result = await res.json();
+    result.success ? router.push("/") : router.push("/createpost/failure");
+  };
 
   if (!step1Data || !step2Data) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
+      <div className="min-h-screen flex items-center justify-center text-red-500 text-lg font-semibold">
         Missing post data. Please complete previous steps.
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen text-gray-200 bg-gradient-to-br from-black via-zinc-900 to-neutral-800 text-white py-10 px-4">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl p-10 font-bold mb-8 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] py-12 px-4 text-white">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 tracking-tight">
           Review Your Business Post
         </h1>
 
-        <Card className="bg-zinc-950 border border-zinc-800 mb-6 shadow-xl">
-          <CardContent className="p-6 space-y-4">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-200">
-                Business Name
-              </h2>
-              <p className="text-gray-200">{step1Data.name}</p>
+        <Card className="bg-white/5 backdrop-blur-md border border-white/10 shadow-xl rounded-2xl overflow-hidden transition-all duration-300">
+          <CardContent className="p-6 md:p-10 space-y-6">
+            <div className="space-y-4">
+              <Detail title="Business Name" value={step1Data.name} />
+              <Detail title="Description" value={step1Data.description} />
             </div>
 
-            <div>
-              <h2 className="text-xl font-semibold text-gray-200">
-                Description
-              </h2>
-              <p className="text-gray-200">{step1Data.description}</p>
-            </div>
-
-            <div className="text-gray-200 grid grid-cols-2 gap-4">
-              <div>
-                <h2 className="text-xl font-semibold">Business Type</h2>
-                <p>{step1Data.businessType}</p>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Stage</h2>
-                <p>{step1Data.stage}</p>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Launch Timeline</h2>
-                <p>{step1Data.launchTimeline}</p>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Estimated Budget</h2>
-                <p>₹ {step2Data.estimatedBudget}</p>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Available Money</h2>
-                <p>₹ {step2Data.availableMoney}</p>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Funding Required</h2>
-                <p>{step2Data.fundingRequired ? "Yes" : "No"}</p>
-              </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <Detail title="Business Type" value={step1Data.businessType} />
+              <Detail title="Stage" value={step1Data.stage} />
+              <Detail title="Launch Timeline" value={step1Data.launchTimeline} />
+              <Detail title="Estimated Budget" value={`₹ ${step2Data.estimatedBudget}`} />
+              <Detail title="Available Money" value={`₹ ${step2Data.availableMoney}`} />
+              <Detail
+                title="Funding Required"
+                value={step2Data.fundingRequired ? "Yes" : "No"}
+              />
               {step2Data.fundingRequired && (
-                <div>
-                  <h2 className="text-xl font-semibold">Funding Amount</h2>
-                  <p>₹ {step2Data.fundingAmount}</p>
-                </div>
+                <Detail title="Funding Amount" value={`₹ ${step2Data.fundingAmount}`} />
               )}
             </div>
 
             {step1Data.imageUrl && (
-              <img
-                src={step1Data.imageUrl}
-                alt="Uploaded Image"
-                className="w-full max-w-md rounded shadow"
-              />
+              <div className="mt-4">
+                <img
+                  src={step1Data.imageUrl}
+                  alt="Uploaded Image"
+                  width={800}
+                  height={500}
+                  className="rounded-lg border border-white/20 shadow-lg"
+                />
+              </div>
             )}
-
           </CardContent>
         </Card>
 
-        <div className="flex justify-between items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-10">
           <Button
             variant="outline"
-            className="text-gray-900"
+            className="bg-white text-black hover:bg-gray-100 transition"
             onClick={() => router.push("/createpost/business/step2")}
           >
-            Go Back
+            ← Go Back
           </Button>
-          <Button onClick={handleSubmit}>Submit Post</Button>
+          <Button
+            className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 transition-all text-white px-6 py-2 rounded-xl"
+            onClick={handleSubmit}
+          >
+            🚀 Submit Post
+          </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Detail({ title, value }: { title: string; value: string }) {
+  return (
+    <div>
+      <h2 className="text-lg font-semibold text-white/90">{title}</h2>
+      <p className="text-white/70">{value}</p>
     </div>
   );
 }
