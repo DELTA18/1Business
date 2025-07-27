@@ -16,4 +16,5 @@ const BusinessPostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.BusinessPost || mongoose.model("BusinessPost", BusinessPostSchema);
+export default mongoose.models.BusinessPost ||
+  mongoose.model("BusinessPost", BusinessPostSchema);

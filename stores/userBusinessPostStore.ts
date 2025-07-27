@@ -1,11 +1,10 @@
-
 import { create } from "zustand";
 
 type Step1Data = {
   name: string;
   description: string;
   businessType: string;
-  image: File | null;
+  imageUrl: string;
   stage: string;
   launchTimeline: string;
 };
@@ -32,7 +31,7 @@ export const useBusinessPostStore = create<BusinessPostStore>((set) => ({
     name: "",
     description: "",
     businessType: "",
-    image: null,
+    imageUrl: "",
     stage: "",
     launchTimeline: "",
   },
@@ -50,7 +49,7 @@ export const useBusinessPostStore = create<BusinessPostStore>((set) => ({
         name: "",
         description: "",
         businessType: "",
-        image: null,
+        imageUrl: "",
         stage: "",
         launchTimeline: "",
       },

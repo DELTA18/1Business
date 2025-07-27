@@ -13,47 +13,33 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import Image from "next/image";
-import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-
 import { useBusinessPostStore } from "@/stores/userBusinessPostStore";
+import { motion } from "framer-motion";
 
 export default function BusinessStep1Form() {
   const router = useRouter();
   const { setStep1Data } = useBusinessPostStore();
 
-  // Form state
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [businessType, setBusinessType] = useState(""); // Ideally passed from ComboboxDemo
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [businessType, setBusinessType] = useState("");
+  const [imageURL, setImageURL] = useState("");
   const [stage, setStage] = useState("");
   const [timeline, setTimeline] = useState("");
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 💾 Save to Zustand
     setStep1Data({
       name,
       description,
       businessType,
-      image,
+      imageUrl: imageURL,
       stage,
       launchTimeline: timeline,
     });
 
-    // 🚀 Go to Step 2
     router.push("/createpost/business/step2");
   };
 
@@ -81,58 +67,60 @@ export default function BusinessStep1Form() {
             <p className="text-gray-500 mt-2 text-sm">Step 1 of 3</p>
           </div>
 
-          {/* Field: Business Name */}
+          {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name">Business Name</Label>
+            <Label>Business Name</Label>
             <Input
-              id="name"
-              name="name"
               placeholder="e.g. CloudEats, InstaFix"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="focus-visible:ring-2 focus-visible:ring-pink-400 shadow-md"
+              required
             />
           </div>
 
-          {/* Field: Description */}
+          {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="desc">Description</Label>
+            <Label>Description</Label>
             <Textarea
-              id="desc"
-              name="description"
-              placeholder="Give a quick overview of what your business does..."
+              placeholder="Quick overview of what your business does..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="focus-visible:ring-2 focus-visible:ring-blue-400 shadow-md"
+              required
             />
           </div>
 
-          {/* Field: Type (To do: hook up state with Combobox) */}
+          {/* Business Type */}
           <div className="space-y-2">
             <Label>Business Type</Label>
-            <ComboboxDemo value={businessType} onChange={setBusinessType} /> {/* <-- Modify your Combobox to accept onChange */}
+            <ComboboxDemo value={businessType} onChange={setBusinessType} />
           </div>
 
-          {/* Image Upload */}
-          <div className="space-y-3">
-            <Label>Business Image</Label>
-            <Input type="file" accept="image/*" onChange={handleImageChange} />
-            {imagePreview && (
-              <Image
-                src={imagePreview}
-                alt="Preview"
-                width={500}
-                height={280}
-                className="rounded-2xl shadow-md mt-2 border border-gray-200"
-              />
-            )}
+          {/* Image URL Only */}
+          <div className="space-y-2">
+            <Label>Image URL</Label>
+            <Input
+              type="url"
+              placeholder="Paste an image link (https://...)"
+              value={imageURL}
+              onChange={(e) => setImageURL(e.target.value.trim())}
+              required
+            />
           </div>
 
-          {/* Stage Select */}
+          {/* Preview */}
+          {imageURL && (
+            <img
+              src={imageURL}
+              alt="Preview"
+              className="w-full max-w-[500px] h-auto mt-4 rounded-xl border shadow-md"
+            />
+          )}
+
+          {/* Stage */}
           <div className="space-y-2">
             <Label>Stage of Business</Label>
             <Select onValueChange={(val) => setStage(val)}>
-              <SelectTrigger className="focus:ring-2 focus:ring-indigo-400 shadow-md">
+              <SelectTrigger>
                 <SelectValue placeholder="Choose your stage" />
               </SelectTrigger>
               <SelectContent>
@@ -144,11 +132,11 @@ export default function BusinessStep1Form() {
             </Select>
           </div>
 
-          {/* Timeline Select */}
+          {/* Timeline */}
           <div className="space-y-2">
             <Label>Launch Timeline</Label>
             <Select onValueChange={(val) => setTimeline(val)}>
-              <SelectTrigger className="focus:ring-2 focus:ring-pink-400 shadow-md">
+              <SelectTrigger>
                 <SelectValue placeholder="When will you launch?" />
               </SelectTrigger>
               <SelectContent>
@@ -160,13 +148,13 @@ export default function BusinessStep1Form() {
             </Select>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
             <Button
               type="submit"
               className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:brightness-110 hover:shadow-2xl transition-all group"
             >
-              Continue
+              Continue{" "}
               <span className="ml-2 group-hover:ml-3 transition-all">→</span>
             </Button>
           </motion.div>

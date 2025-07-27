@@ -11,45 +11,22 @@ export default function ReviewPostPage() {
   const { step1Data, step2Data } = useBusinessPostStore();
 
   const handleSubmit = async () => {
-  if (!step1Data || !step2Data) return;
+      const postData = {
+        ...step1Data,
+        ...step2Data,
+      };
 
-  const formData = new FormData();
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
 
-  const postData = {
-    name: step1Data.name,
-    description: step1Data.description,
-    businessType: step1Data.businessType,
-    stage: step1Data.stage,
-    launchTimeline: step1Data.launchTimeline,
-    estimatedBudget: step2Data.estimatedBudget,
-    availableMoney: step2Data.availableMoney,
-    fundingRequired: step2Data.fundingRequired,
-    fundingAmount: step2Data.fundingAmount,
-  };
-
-  formData.append("json", JSON.stringify(postData));
-  if (step1Data.image) {
-    formData.append("image", step1Data.image);
-  }
-
-  try {
-    const res = await fetch("/api/posts", {
-      method: "POST",
-      body: formData,
-    });
-
-    const result = await res.json();
-    if (result.success) {
-      alert("Post submitted successfully!");
-      router.push("/"); // or redirect to posts list
-    } else {
-      alert("Failed to submit post");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Error submitting post");
-  }
-};
+      const result = await res.json();
+      console.log(result);
+    };
 
 
   if (!step1Data || !step2Data) {
@@ -63,21 +40,27 @@ export default function ReviewPostPage() {
   return (
     <div className="min-h-screen text-gray-200 bg-gradient-to-br from-black via-zinc-900 to-neutral-800 text-white py-10 px-4">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl p-10 font-bold mb-8 text-center">Review Your Business Post</h1>
+        <h1 className="text-4xl p-10 font-bold mb-8 text-center">
+          Review Your Business Post
+        </h1>
 
         <Card className="bg-zinc-950 border border-zinc-800 mb-6 shadow-xl">
           <CardContent className="p-6 space-y-4">
             <div>
-              <h2 className="text-xl font-semibold text-gray-200">Business Name</h2>
+              <h2 className="text-xl font-semibold text-gray-200">
+                Business Name
+              </h2>
               <p className="text-gray-200">{step1Data.name}</p>
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-gray-200">Description</h2>
+              <h2 className="text-xl font-semibold text-gray-200">
+                Description
+              </h2>
               <p className="text-gray-200">{step1Data.description}</p>
             </div>
 
-            <div className=" text-gray-200 grid grid-cols-2 gap-4">
+            <div className="text-gray-200 grid grid-cols-2 gap-4">
               <div>
                 <h2 className="text-xl font-semibold">Business Type</h2>
                 <p>{step1Data.businessType}</p>
@@ -110,23 +93,23 @@ export default function ReviewPostPage() {
               )}
             </div>
 
-            {step1Data.image && (
-              <div>
-                <h2 className="text-xl font-semibold">Uploaded Image</h2>
-                <Image
-                  src={URL.createObjectURL(step1Data.image)}
-                  alt="Business"
-                  width={400}
-                  height={300}
-                  className="rounded-lg border border-zinc-800"
-                />
-              </div>
+            {step1Data.imageUrl && (
+              <img
+                src={step1Data.imageUrl}
+                alt="Uploaded Image"
+                className="w-full max-w-md rounded shadow"
+              />
             )}
+
           </CardContent>
         </Card>
 
         <div className="flex justify-between items-center gap-4">
-          <Button variant="outline" className=" text-gray-900" onClick={() => router.push("/createpost/business/step2")}>
+          <Button
+            variant="outline"
+            className="text-gray-900"
+            onClick={() => router.push("/createpost/business/step2")}
+          >
             Go Back
           </Button>
           <Button onClick={handleSubmit}>Submit Post</Button>
