@@ -1,39 +1,74 @@
-
 'use client';
 
-import next from "next";
 import { useRouter } from "next/navigation";
-export default function CreatePostInitiator() {
+import { motion } from "framer-motion";
+import { Briefcase, Rocket, Lightbulb } from "lucide-react";
 
+export default function CreatePostInitiator() {
   const router = useRouter();
   const posttypes = [
-    { id: 1, type: "Start your business", next: "/createpost/business/step1" },
-    { id: 2, type: "Share your Profession", next: "/createpost/profession/step1" },
-    { id: 3, type: "Share your Thing", next: "/createpost/thing/step1" },
+    { 
+      id: 1, 
+      type: "Start your Business", 
+      icon: <Rocket size={36} />, 
+      desc: "Turn your idea into reality and get feedback from others.",
+      next: "/createpost/business/step1" 
+    },
+    { 
+      id: 2, 
+      type: "Share your Profession", 
+      icon: <Briefcase size={36} />, 
+      desc: "Show your skills and let people know what you do best.",
+      next: "/createpost/profession/step1" 
+    },
+    { 
+      id: 3, 
+      type: "Share your Thing", 
+      icon: <Lightbulb size={36} />, 
+      desc: "Showcase your products, side hustles or unique creations.",
+      next: "/createpost/thing/step1" 
+    },
   ];
 
   const handlePostTypeClick = (next: string) => {
-    // Logic to handle post type selection
-    console.log(`Selected post type: ${next}`);
     router.push(next);
   };
-  return (
-    <main className="flex flex-col items-center justify-center gap-10 p-24">
-      <h1 className="text-7xl font-bold text-amber-200">Create Post</h1>
-      <p className="text-lg text-gray-600">Select Which Type of Post You Want</p>
 
-      <div>
-        {posttypes.map((post) => (
-          <div
+  return (
+    <main className="flex flex-col items-center justify-center gap-10 px-6 py-24 bg-gradient-to-b from-gray-950 to-gray-900 min-h-screen">
+      {/* Header */}
+      <div className="text-center space-y-3">
+        <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
+          Create a Post
+        </h1>
+        <p className="text-gray-400 text-lg">
+          Select which type of post you want to create
+        </p>
+      </div>
+
+      {/* Post Type Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mt-10">
+        {posttypes.map((post, index) => (
+          <motion.div
             key={post.id}
-            className="px-20 py-10 m-2 bg-blue-200 text-center rounded-lg cursor-pointer border-blue-600 border-2 hover:bg-blue-300"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.6 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => handlePostTypeClick(post.next)}
+            className="cursor-pointer group bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-lg transition-all"
           >
-            <label className="text-2xl text-gray-900">{post.type}</label>
-          </div>
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div className="bg-gradient-to-tr from-blue-500 to-cyan-400 p-4 rounded-full text-white group-hover:scale-110 transition-transform">
+                {post.icon}
+              </div>
+              <h2 className="text-xl font-semibold text-white">{post.type}</h2>
+              <p className="text-gray-400 text-sm leading-relaxed">{post.desc}</p>
+            </div>
+          </motion.div>
         ))}
       </div>
-      {/* Add your post creation form or component here */}
     </main>
   );
 }

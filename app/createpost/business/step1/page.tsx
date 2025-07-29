@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useBusinessPostStore } from "@/stores/userBusinessPostStore";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function BusinessStep1Form() {
   const router = useRouter();
@@ -50,28 +50,30 @@ export default function BusinessStep1Form() {
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="pt-28 px-4"
     >
-      <div className="font-poppins relative max-w-4xl mx-auto p-[2px] rounded-[24px] bg-gradient-to-r from-blue-500 via-indigo-500 to-pink-500 shadow-lg shadow-indigo-300/30">
+      <div className="font-poppins relative max-w-4xl mx-auto rounded-[24px] bg-gradient-to-r from-blue-500/80 via-purple-500/80 to-pink-500/80 p-[2px] shadow-xl shadow-blue-900/30">
         <form
           onSubmit={handleSubmit}
-          className="bg-black/80 rounded-[22px] p-10 md:p-14 space-y-10 backdrop-blur-md"
+          className="bg-gray-950/90 rounded-[22px] p-10 md:p-14 space-y-10 backdrop-blur-xl"
         >
-          <div className="text-center">
+          {/* Header */}
+          <div className="text-center space-y-2">
             <motion.h2
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-pink-500 text-transparent bg-clip-text"
+              className="text-4xl font-extrabold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text"
             >
               🚀 Start Your Business
             </motion.h2>
-            <p className="text-gray-500 mt-2 text-sm">Step 1 of 3</p>
+            <p className="text-gray-400 text-sm">Step 1 of 3</p>
           </div>
 
           {/* Name */}
           <div className="space-y-2">
-            <Label>Business Name</Label>
+            <Label className="text-gray-300 text-sm">Business Name</Label>
             <Input
               placeholder="e.g. CloudEats, InstaFix"
+              className="focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -80,9 +82,10 @@ export default function BusinessStep1Form() {
 
           {/* Description */}
           <div className="space-y-2">
-            <Label>Description</Label>
+            <Label className="text-gray-300 text-sm">Description</Label>
             <Textarea
               placeholder="Quick overview of what your business does..."
+              className="focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -91,36 +94,42 @@ export default function BusinessStep1Form() {
 
           {/* Business Type */}
           <div className="space-y-2">
-            <Label>Business Type</Label>
+            <Label className="text-gray-300 text-sm">Business Type</Label>
             <ComboboxDemo value={businessType} onChange={setBusinessType} />
           </div>
 
-          {/* Image URL Only */}
+          {/* Image URL */}
           <div className="space-y-2">
-            <Label>Image URL</Label>
+            <Label className="text-gray-300 text-sm">Image URL</Label>
             <Input
               type="url"
               placeholder="Paste an image link (https://...)"
+              className="focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
               value={imageURL}
               onChange={(e) => setImageURL(e.target.value.trim())}
               required
             />
           </div>
 
-          {/* Preview */}
-          {imageURL && (
-            <img
-              src={imageURL}
-              alt="Preview"
-              className="w-full max-w-[500px] h-auto mt-4 rounded-xl border shadow-md"
-            />
-          )}
+          {/* Image Preview */}
+          <AnimatePresence>
+            {imageURL && (
+              <motion.img
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                src={imageURL}
+                alt="Preview"
+                className="w-full max-w-[500px] h-auto mt-4 rounded-xl border border-white/10 shadow-lg mx-auto"
+              />
+            )}
+          </AnimatePresence>
 
           {/* Stage */}
           <div className="space-y-2">
-            <Label>Stage of Business</Label>
+            <Label className="text-gray-300 text-sm">Stage of Business</Label>
             <Select onValueChange={(val) => setStage(val)}>
-              <SelectTrigger>
+              <SelectTrigger className="focus:ring-2 focus:ring-blue-500/50">
                 <SelectValue placeholder="Choose your stage" />
               </SelectTrigger>
               <SelectContent>
@@ -134,9 +143,9 @@ export default function BusinessStep1Form() {
 
           {/* Timeline */}
           <div className="space-y-2">
-            <Label>Launch Timeline</Label>
+            <Label className="text-gray-300 text-sm">Launch Timeline</Label>
             <Select onValueChange={(val) => setTimeline(val)}>
-              <SelectTrigger>
+              <SelectTrigger className="focus:ring-2 focus:ring-blue-500/50">
                 <SelectValue placeholder="When will you launch?" />
               </SelectTrigger>
               <SelectContent>
@@ -148,11 +157,11 @@ export default function BusinessStep1Form() {
             </Select>
           </div>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
             <Button
               type="submit"
-              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:brightness-110 hover:shadow-2xl transition-all group"
+              className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:brightness-110 hover:shadow-lg transition-all group"
             >
               Continue{" "}
               <span className="ml-2 group-hover:ml-3 transition-all">→</span>

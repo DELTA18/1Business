@@ -1,15 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useBusinessPostStore } from "@/stores/userBusinessPostStore";
+import { useProfessionPostStore } from "@/stores/userProfessionPostStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
-export default function ReviewPostPage() {
+export default function ProfessionReviewPage() {
   const router = useRouter();
-  const { step1Data, step2Data } = useBusinessPostStore();
+  const { step1Data, step2Data, reset } = useProfessionPostStore();
 
   const handleSubmit = async () => {
     const postData = {
@@ -17,16 +17,19 @@ export default function ReviewPostPage() {
       ...step2Data,
     };
 
-    const res = await fetch("/api/posts", {
+    const res = await fetch("/api/posts/profession-posts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(postData),
     });
+
     if (!res.ok) {
       toast.error("Failed to submit post. Please try again.");
       return;
     }
-    toast.success("Post submitted successfully!");
+
+    toast.success("Profession post submitted successfully!");
+    reset();
     const result = await res.json();
     result.success ? router.push("/") : router.push("/createpost/failure");
   };
@@ -53,7 +56,7 @@ export default function ReviewPostPage() {
           transition={{ duration: 0.7 }}
           className="text-4xl md:text-5xl font-bold text-center mb-10 tracking-tight"
         >
-          Review Your Business Post
+          Review Your Profession Post
         </motion.h1>
 
         {/* Review Card */}
@@ -64,41 +67,28 @@ export default function ReviewPostPage() {
         >
           <Card className="bg-white/5 backdrop-blur-md border border-white/10 shadow-xl rounded-2xl overflow-hidden">
             <CardContent className="p-8 md:p-10 space-y-6">
-              {/* Step 1 Info */}
+              {/* Step 1 Data */}
               <div className="space-y-4">
-                <Detail title="Business Name" value={step1Data.name} />
+                <Detail title="Name" value={step1Data.name} />
                 <Detail title="Description" value={step1Data.description} />
-              </div>
-
-              {/* Step 1 + Step 2 Details Grid */}
-              <div className="grid md:grid-cols-2 gap-6 mt-6">
-                <Detail title="Business Type" value={step1Data.businessType} />
-                <Detail title="Stage" value={step1Data.stage} />
-                <Detail title="Launch Timeline" value={step1Data.launchTimeline} />
-                <Detail title="Estimated Budget" value={`₹ ${step2Data.estimatedBudget}`} />
-                <Detail title="Available Money" value={`₹ ${step2Data.availableMoney}`} />
+                <Detail title="Experience" value={step1Data.experience} />
+                <Detail title="Type of Profession" value={step1Data.type} />
                 <Detail
-                  title="Funding Required"
-                  value={step2Data.fundingRequired ? "Yes" : "No"}
+                  title="Asking Price"
+                  value={`₹ ${step1Data.askingPrice}`}
                 />
-                {step2Data.fundingRequired && (
-                  <Detail title="Funding Amount" value={`₹ ${step2Data.fundingAmount}`} />
-                )}
               </div>
 
-              {/* Image Preview */}
-              {step1Data.imageUrl && (
-                <motion.img
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6 }}
-                  src={step1Data.imageUrl}
-                  alt="Uploaded"
-                  width={800}
-                  height={500}
-                  className="w-full rounded-xl border border-white/20 shadow-lg mt-4"
+              {/* Step 2 Data */}
+              <div className="grid md:grid-cols-2 gap-6 mt-6">
+                <Detail
+                  title="Experience (Years)"
+                  value={`${step2Data.experienceYears} years`}
                 />
-              )}
+                <Detail title="Availability" value={step2Data.availability} />
+                <Detail title="Locations" value={step2Data.locations} />
+                <Detail title="Portfolio / Links" value={step2Data.portfolio} />
+              </div>
             </CardContent>
           </Card>
         </motion.div>
@@ -108,15 +98,15 @@ export default function ReviewPostPage() {
           <Button
             variant="outline"
             className="bg-white text-black hover:bg-gray-100 transition-all px-6 py-2 rounded-xl"
-            onClick={() => router.push("/createpost/business/step2")}
+            onClick={() => router.push("/createpost/profession/step2")}
           >
             ← Go Back
           </Button>
           <Button
             onClick={handleSubmit}
-            className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 transition-all text-white px-6 py-2 rounded-xl"
+            className="bg-gradient-to-r from-green-500 via-teal-600 to-blue-600 hover:from-green-600 hover:to-blue-700 transition-all text-white px-6 py-2 rounded-xl"
           >
-            🚀 Submit Post
+            🚀 Submit Profession Post
           </Button>
         </div>
       </div>

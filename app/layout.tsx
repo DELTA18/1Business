@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner"
 
 import localFont from "next/font/local";
+import { SessionProvider } from "next-auth/react";
 
 const poppins = localFont({
   src: [
@@ -47,12 +48,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} antialiased poppins-light`}
-      >
+        className={`${poppins.variable} antialiased poppins-light`}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <SessionProvider>
         <LayoutWrapper>
           {children}
         </LayoutWrapper>
+        </SessionProvider>
       </ThemeProvider>
       <Toaster richColors />
       </body>
