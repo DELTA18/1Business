@@ -6,6 +6,7 @@ import { useBusinessPostStore } from "@/stores/userBusinessPostStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import { toast } from "sonner"
 
 export default function ReviewPostPage() {
   const router = useRouter();
@@ -22,7 +23,11 @@ export default function ReviewPostPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(postData),
     });
-
+    if (!res.ok) {
+      toast.error("Failed to submit post. Please try again.");
+      return;
+    }
+    toast.success("Post submitted successfully!");
     const result = await res.json();
     result.success ? router.push("/") : router.push("/createpost/failure");
   };

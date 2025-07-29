@@ -50,10 +50,10 @@ export default function BusinessStep1Form() {
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="pt-28 px-4"
     >
-      <div className="relative max-w-4xl mx-auto p-[2px] rounded-[24px] bg-gradient-to-r from-blue-500 via-indigo-500 to-pink-500 shadow-lg shadow-indigo-300/30 animate-pulse-slow">
+      <div className="font-poppins relative max-w-4xl mx-auto p-[2px] rounded-[24px] bg-gradient-to-r from-blue-500 via-indigo-500 to-pink-500 shadow-lg shadow-indigo-300/30">
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-[22px] p-10 md:p-14 space-y-10 backdrop-blur-md"
+          className="bg-black/80 rounded-[22px] p-10 md:p-14 space-y-10 backdrop-blur-md"
         >
           <div className="text-center">
             <motion.h2
