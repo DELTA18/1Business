@@ -7,12 +7,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
+import { useSession } from "next-auth/react";
 export default function ProfessionReviewPage() {
   const router = useRouter();
   const { step1Data, step2Data, reset } = useProfessionPostStore();
+  const { data: session } = useSession();
+  const userId = session?.user?.googleId || session?.user?.id;
+
 
   const handleSubmit = async () => {
     const postData = {
+      userId,
       ...step1Data,
       ...step2Data,
     };

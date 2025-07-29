@@ -1,20 +1,23 @@
-import mongoose from "mongoose";
+import mongoose,  { Schema, model, models } from "mongoose";
 
-const BusinessPostSchema = new mongoose.Schema(
+const BusinessPostSchema = new Schema(
   {
-    name: String,
-    description: String,
-    businessType: String,
-    imageUrl: String,
-    stage: String,
-    launchTimeline: String,
-    estimatedBudget: String,
-    availableMoney: String,
-    fundingRequired: Boolean,
-    fundingAmount: String,
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    businessType: { type: String, required: true },
+    imageUrl: { type: String, required: true },
+    stage: { type: String, required: true },
+    launchTimeline: { type: String, required: true },
+    estimatedBudget: { type: String, required: true },
+    availableMoney: { type: String, required: true },
+    fundingRequired: { type: Boolean, default: false },
+    fundingAmount: { type: String, required: false },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.BusinessPost ||
-  mongoose.model("BusinessPost", BusinessPostSchema);
+const BusinessPost =
+  models.BusinessPost || model("BusinessPost", BusinessPostSchema);
+
+export default BusinessPost;

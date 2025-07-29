@@ -7,16 +7,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
+import { useSession } from "next-auth/react";
+
 export default function ReviewPostPage() {
   const router = useRouter();
   const { step1Data, step2Data } = useBusinessPostStore();
-
+  const { data: session } = useSession();
+  const userId = session?.user?.googleId || session?.user?.id;
+  console.log(userId, "user id in review page");
   const handleSubmit = async () => {
     const postData = {
+      userId,
       ...step1Data,
       ...step2Data,
     };
-
+    console.log(postData, "post data in review page");
     const res = await fetch("/api/posts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

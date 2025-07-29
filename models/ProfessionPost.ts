@@ -2,6 +2,7 @@ import mongoose, { Schema, model, models } from "mongoose";
 
 const ProfessionPostSchema = new Schema(
   {
+    userId: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
     experience: { type: String, required: true },
