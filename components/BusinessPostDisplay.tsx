@@ -124,7 +124,7 @@ const BusinessPostDisplay = ({ post }: any) => {
       {/* Footer */}
       <div className="flex items-center justify-between mt-6">
         <Link
-          href={`/post/${post._id}`}
+          href={`/business/${post._id}`}
           className="text-sm font-medium text-white bg-cyan-500 hover:bg-cyan-600 transition px-4 py-2 rounded-full shadow-md hover:shadow-lg"
         >
           View Details

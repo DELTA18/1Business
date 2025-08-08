@@ -1,15 +1,21 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/lib/mongoose";
-import  User  from "@/models/User";
 import dbConnect from "@/lib/mongoose";
+import User from "@/models/User";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
+    // Connect to MongoDB
     await dbConnect();
 
-    const user = await User.findOne({ googleId: params.id });
+    // Await params before accessing
+    const { id } = await context.params;
+
+    const user = await User.findOne({ googleId: id });
     if (!user) {
-      // Handle no user case
+      // Return default user data if not found
       return NextResponse.json({
         name: "Anonymous User",
         image: "/default-avatar.png",
@@ -21,7 +27,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       image: user.image || "/default-avatar.png",
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching user:", error);
     return NextResponse.json({ error: "Server Error" }, { status: 500 });
   }
 }
