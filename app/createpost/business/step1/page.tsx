@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ComboboxDemo } from "@/components/TypeComboBox";
@@ -16,13 +15,17 @@ import {
 import { useRouter } from "next/navigation";
 import { useBusinessPostStore } from "@/stores/userBusinessPostStore";
 import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic"; // ✅ Needed for client-only MD editor
+
+// Dynamically import Markdown Editor (to avoid SSR issues)
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function BusinessStep1Form() {
   const router = useRouter();
   const { setStep1Data } = useBusinessPostStore();
 
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string>("");
   const [businessType, setBusinessType] = useState("");
   const [imageURL, setImageURL] = useState("");
   const [stage, setStage] = useState("");
@@ -33,7 +36,7 @@ export default function BusinessStep1Form() {
 
     setStep1Data({
       name,
-      description,
+      description, // This now contains markdown content
       businessType,
       imageUrl: imageURL,
       stage,
@@ -80,15 +83,22 @@ export default function BusinessStep1Form() {
             />
           </div>
 
-          {/* Description */}
-          <div className="space-y-2">
-            <Label className="text-gray-300 text-sm">Description</Label>
-            <Textarea
-              placeholder="Quick overview of what your business does..."
-              className="focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
+          {/* Detailed Description (Markdown Editor) */}
+          <div className="space-y-2" data-color-mode="dark">
+            <Label className="text-gray-300 text-sm">
+              Detailed Description{" "}
+              <span className="text-xs text-gray-400">(Markdown Supported)</span>
+            </Label>
+            <MDEditor
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
+              onChange={(val) => setDescription(val || "")}
+              height={220}
+              preview="edit" // You can change to "live" for split preview
+              textareaProps={{
+                placeholder:
+                  "Describe your business idea, vision, and details here. You can use headings, bold text, lists, and links with markdown.",
+              }}
+              className="rounded-lg border border-gray-700 bg-gray-900"
             />
           </div>
 
