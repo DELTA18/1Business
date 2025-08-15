@@ -65,14 +65,14 @@ export default function Navbar() {
               </button>
             ) : (
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
+                <Link href="/profile" className="flex items-center gap-2">
                   <img
                     src={session.user.image || '/default-profile.png'}
                     alt="profile"
                     className="w-8 h-8 rounded-full object-cover border border-white"
                   />
                   <span className="text-white font-medium">Hello, {session.user.name?.split(' ')[0]}</span>
-                </div>
+                </Link>
                 <button
                   onClick={() => signOut()}
                   className="bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium px-4 py-2 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition transform duration-200"

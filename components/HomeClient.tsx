@@ -7,7 +7,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 
-export default function HomeClient({ session, posts }: any) {
+export default function HomeClient({ session, posts, userId }: any) {
+  console.log(userId, "User ID in HomeClient");
   return (
     <main className="relative mt-12 min-h-screen w-full bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 px-6 py-16">
       {/* Background Accent */}

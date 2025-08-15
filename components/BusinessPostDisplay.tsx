@@ -39,7 +39,10 @@ function getRelativeTime(updatedAt: string) {
 
 const BusinessPostDisplay = ({ post }: any) => {
   const [userData, setUserData] = useState<{ name: string; image: string } | null>(null);
-
+  const [like, setLike] = useState(0);
+  useEffect(() => {
+    like == 1 ? console.log('Liked!') : console.log('Not liked');
+  },[like]);
   useEffect(() => {
     const fetchUser = async () => {
       if (!post.userId) return; // No user id
@@ -132,7 +135,9 @@ const BusinessPostDisplay = ({ post }: any) => {
 
         <div className="flex items-center gap-4">
           <button className="group relative flex items-center gap-1 text-gray-300 hover:text-rose-400 transition">
-            <Heart size={18} className="group-hover:scale-110 transition-transform" />
+            <Heart onClick={() => {
+              setLike(like === 1 ? 0 : 1);
+            }} size={18} className="group-hover:scale-110 transition-transform" />
             <span className="text-xs">24</span>
           </button>
           <button className="group relative flex items-center gap-1 text-gray-300 hover:text-blue-400 transition">
