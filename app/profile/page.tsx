@@ -33,6 +33,13 @@ type User = {
   socialLinks?: string[];
 };
 
+type Post = {
+  _id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+};
+
 export default function ProfilePage() {
   const { data: session, status } = useSession();
 
@@ -41,6 +48,12 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [copiedEmail, setCopiedEmail] = useState(false);
 
+  const [activeTab, setActiveTab] = useState("about");
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [postsError, setPostsError] = useState<string | null>(null);
+
+  // Fetch user details
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -70,6 +83,34 @@ export default function ProfilePage() {
 
     fetchUser();
   }, [status, session?.user]);
+
+  // Fetch posts only when user clicks "Posts" tab
+  useEffect(() => {
+    if (activeTab !== "posts" || !user) return;
+
+    const fetchPosts = async () => {
+      try {
+        setPostsLoading(true);
+        setPostsError(null);
+
+        const res = await fetch(`/api/posts?googleId=${encodeURIComponent(user.googleId)}`);
+        const data = await res.json();
+
+        if (!data.success) {
+          setPostsError(data.error || "Failed to load posts");
+          return;
+        }
+
+        setPosts(data.posts || []);
+      } catch {
+        setPostsError("Failed to load posts");
+      } finally {
+        setPostsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [activeTab, user]);
 
   const handleCopyEmail = async () => {
     if (!user?.email) return;
@@ -133,9 +174,6 @@ export default function ProfilePage() {
                 variant="secondary"
                 className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-700 text-white"
                 title="Edit avatar"
-                onClick={() => {
-                  /* hook up modal later */
-                }}
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -171,10 +209,10 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              {/* Quick stats (placeholders) */}
+              {/* Quick stats */}
               <div className="mt-3 flex flex-wrap gap-2">
                 <Badge variant="secondary" className="bg-zinc-800 text-zinc-200">
-                  Posts: 0
+                  Posts: {posts.length}
                 </Badge>
                 <Badge variant="secondary" className="bg-zinc-800 text-zinc-200">
                   Followers: 0
@@ -187,7 +225,6 @@ export default function ProfilePage() {
           </CardHeader>
 
           <CardContent className="px-4 sm:px-6 pb-6">
-            {/* Social badges */}
             <div className="mb-4">
               <div className="flex flex-wrap gap-2">
                 {socialLinks.length > 0 ? (
@@ -219,8 +256,7 @@ export default function ProfilePage() {
 
             <Separator className="my-4 bg-zinc-800" />
 
-            {/* Tabs */}
-            <Tabs defaultValue="about" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="bg-zinc-800/60">
                 <TabsTrigger value="about">About</TabsTrigger>
                 <TabsTrigger value="posts">Posts</TabsTrigger>
@@ -231,72 +267,28 @@ export default function ProfilePage() {
               {/* About */}
               <TabsContent value="about" className="mt-4 space-y-3">
                 <p className="text-zinc-300">{user.bio || "No bio yet."}</p>
-                <div className="grid sm:grid-cols-2 gap-3 text-sm text-zinc-300">
-                  <div className="rounded-lg bg-zinc-900/60 p-3 border border-zinc-800">
-                    <div className="text-zinc-500">Email</div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="truncate">{user.email}</span>
-                      <Button size="icon" variant="ghost" onClick={handleCopyEmail} title="Copy email">
-                        {copiedEmail ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="rounded-lg bg-zinc-900/60 p-3 border border-zinc-800">
-                    <div className="text-zinc-500">Phone</div>
-                    <div>{user.phone || "—"}</div>
-                  </div>
-                  <div className="rounded-lg bg-zinc-900/60 p-3 border border-zinc-800">
-                    <div className="text-zinc-500">Location</div>
-                    <div>{user.location || "—"}</div>
-                  </div>
-                  <div className="rounded-lg bg-zinc-900/60 p-3 border border-zinc-800">
-                    <div className="text-zinc-500">Google ID</div>
-                    <div className="truncate">{user.googleId}</div>
-                  </div>
-                </div>
               </TabsContent>
 
               {/* Posts */}
               <TabsContent value="posts" className="mt-4">
+                {postsLoading && <div className="text-zinc-400">Loading posts...</div>}
+                {postsError && <div className="text-red-400">{postsError}</div>}
+                {!postsLoading && posts.length === 0 && !postsError && (
+                  <div className="text-zinc-400">No posts yet.</div>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-                    <div className="font-medium">No posts yet</div>
-                    <p className="text-sm text-zinc-400 mt-1">Start sharing your ideas.</p>
-                  </div>
-                  <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-                    <div className="font-medium">Tips</div>
-                    <p className="text-sm text-zinc-400 mt-1">
-                      Use the “Create Post” button in your app.
-                    </p>
-                  </div>
-                </div>
-              </TabsContent>
-
-              {/* Activity */}
-              <TabsContent value="activity" className="mt-4">
-                <div className="space-y-3">
-                  <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-                    <div className="text-sm text-zinc-400">No recent activity.</div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              {/* Settings */}
-              <TabsContent value="settings" className="mt-4">
-                <div className="space-y-3">
-                  <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-                    <div className="font-medium">Edit Profile</div>
-                    <p className="text-sm text-zinc-400">Hook this to your edit modal or page.</p>
-                    <div className="mt-3 flex gap-2">
-                      <Button className="bg-blue-600 hover:bg-blue-700">Open Edit Modal</Button>
-                      <Button
-                        variant="outline"
-                        className="border-zinc-700 text-zinc-200 hover:bg-zinc-800"
-                      >
-                        Change Password
-                      </Button>
+                  {posts.map((post) => (
+                    <div
+                      key={post._id}
+                      className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4"
+                    >
+                      <div className="font-medium">{post.title}</div>
+                      <p className="text-sm text-zinc-400 mt-1">{post.content}</p>
+                      <p className="text-xs text-zinc-500 mt-2">
+                        {new Date(post.createdAt).toLocaleDateString()}
+                      </p>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </TabsContent>
             </Tabs>
