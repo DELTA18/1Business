@@ -81,6 +81,8 @@ const BusinessPostDisplay = ({ post }: any) => {
               src={userData.image}
               alt={userData.name}
               className="w-10 h-10 rounded-full border border-white/30 object-cover"
+              onClick={() => {window.location.href = `/profile/${post.userId}`}}
+              style={{ cursor: 'pointer' }}
             />
             <span className="text-white font-medium text-sm">{userData.name}</span>
           </>

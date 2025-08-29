@@ -16,14 +16,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, message: "Post saved" });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ success: false, error: "Failed to save post" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Failed to save post"}, { status: 500 });
   }
 }
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const googleId = searchParams.get("googleId");
+    const userId = googleId
+    let query = {};
+    if (userId) {
+      query = { userId }; // fetch only posts of that user
+    }
+    console.log("Query:", query);
     await dbConnect();
-    const posts = await BusinessPost.find().sort({ createdAt: -1 });
+    const posts = await BusinessPost.find(query).sort({ createdAt: -1 });
     return NextResponse.json({ success: true, posts });
   } catch (error) {
     console.error("[GET_POSTS_ERROR]", error);

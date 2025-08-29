@@ -18,6 +18,9 @@ export default function Navbar() {
     { label: 'Contact', href: '/contact' },
   ]
 
+  const navSession = useSession()
+  const proflink = session?.user ? `/profile/${session.user.googleId}` : '/profile'
+
   return (
     <nav className="fixed top-0 left-0 w-full z-50 backdrop-blur-2xl border-b border-white/20 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
@@ -65,7 +68,7 @@ export default function Navbar() {
               </button>
             ) : (
               <div className="flex items-center gap-4">
-                <Link href="/profile" className="flex items-center gap-2">
+                <Link href={proflink} className="flex items-center gap-2">
                   <img
                     src={session.user.image || '/default-profile.png'}
                     alt="profile"
