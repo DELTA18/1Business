@@ -11,6 +11,11 @@ const UserSchema = new mongoose.Schema({
   profilePic: String,
   location: String,
   socialLinks: [String],
+  accountTypes: {
+    type: [String],
+    enum: ["start-business", "share-profession", "share-physical"],
+    default: [],
+  },
 });
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
