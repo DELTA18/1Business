@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, message: "Post saved" });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ success: false, error: "Failed to save post"}, { status: 500 });
+    return NextResponse.json({ success: false, error: "Failed to save post" }, { status: 500 });
   }
 }
 
@@ -24,15 +24,26 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const googleId = searchParams.get("googleId");
-    const userId = googleId
-    let query = {};
-    if (userId) {
-      query = { userId }; // fetch only posts of that user
+    const limit = parseInt(searchParams.get("limit") || "6", 10);
+    const skip = parseInt(searchParams.get("skip") || "0", 10);
+
+    let query: any = {};
+    if (googleId) {
+      query = { userId: googleId }; // fetch only posts of that user
     }
-    console.log("Query:", query);
+
     await dbConnect();
-    const posts = await BusinessPost.find(query).sort({ createdAt: -1 });
-    return NextResponse.json({ success: true, posts });
+
+    // ✅ fetch posts with pagination
+    const posts = await BusinessPost.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // ✅ count total posts for this query
+    const totalCount = await BusinessPost.countDocuments(query);
+
+    return NextResponse.json({ success: true, posts, totalCount });
   } catch (error) {
     console.error("[GET_POSTS_ERROR]", error);
     return NextResponse.json({ success: false, error: "Server error" }, { status: 500 });

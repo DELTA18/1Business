@@ -1,14 +1,69 @@
-'use client';
+"use client";
 
+import { useEffect, useState, useRef, useCallback } from "react";
 import CreatePost from "@/components/CreatePost";
 import BusinessPostDisplay from "@/components/BusinessPostDisplay";
-import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { Sparkles } from "lucide-react";
 
-export default function HomeClient({ session, posts, userId }: any) {
-  console.log(userId, "User ID in HomeClient");
+export default function HomeClient({ session }: any) {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [skip, setSkip] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(false); // ✅ NEW: error state
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  const LIMIT = 6;
+
+  const fetchPosts = useCallback(async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await fetch(`/api/posts?limit=${LIMIT}&skip=${skip}`);
+      const data = await res.json();
+      if (data.success) {
+        setPosts((prev) => [...prev, ...data.posts]);
+        setSkip((prev) => prev + data.posts.length);
+        if (skip + data.posts.length >= data.totalCount) setHasMore(false);
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+      setError(true); // ✅ mark error
+    } finally {
+      setLoading(false);
+    }
+  }, [skip, hasMore, loading]);
+
+  // initial load
+  useEffect(() => {
+    fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // intersection observer for infinite scroll
+  useEffect(() => {
+    const el = loaderRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchPosts();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.unobserve(el);
+    };
+  }, [fetchPosts]);
+
   return (
     <main className="relative mt-12 min-h-screen w-full bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 px-6 py-16">
       {/* Background Accent */}
@@ -36,26 +91,65 @@ export default function HomeClient({ session, posts, userId }: any) {
 
           {/* Posts */}
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-8">
-              Latest Business Ideas
-            </h2>
-            {posts.length === 0 ? (
-              <p className="text-gray-400 text-center mt-6">
-                No posts yet. Be the first to create one!
-              </p>
+            <h2 className="text-2xl font-semibold text-white mb-8">Latest Business Ideas</h2>
+
+            {posts.length === 0 && !hasMore && !loading && !error ? (
+              <p className="text-gray-400 text-center mt-6">No posts yet. Be the first to create one!</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {posts.map((post: any, index: number) => (
-                  <motion.div
-                    key={post._id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <BusinessPostDisplay post={post} />
-                  </motion.div>
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {posts.map((post: any, index: number) => (
+                    <motion.div
+                      key={post._id}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <BusinessPostDisplay post={post} />
+                    </motion.div>
+                  ))}
+
+                  {/* Skeletons while loading */}
+                  {loading &&
+                    Array.from({ length: 2 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="animate-pulse border border-gray-700 rounded-xl p-6 bg-gray-800"
+                      >
+                        <div className="h-6 bg-gray-600 rounded w-1/2 mb-3"></div>
+                        <div className="h-4 bg-gray-600 rounded w-full mb-2"></div>
+                        <div className="h-4 bg-gray-600 rounded w-3/4"></div>
+                      </div>
+                    ))}
+                </div>
+
+                {/* Infinite Scroll Loader / Sentinel */}
+                {hasMore && !error && (
+                  <div ref={loaderRef} className="h-12 flex items-center justify-center text-gray-400">
+                    {loading ? "Loading..." : "Scroll for more"}
+                  </div>
+                )}
+
+                {/* Error handling with retry */}
+                {error && (
+                  <div className="text-center mt-6">
+                    <p className="text-red-500 mb-2">Failed to load posts.</p>
+                    <button
+                      onClick={fetchPosts}
+                      className="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
+
+                {/* End of list message */}
+                {!hasMore && posts.length > 0 && !loading && !error && (
+                  <p className="text-center text-gray-500 py-6">
+                    🎉 You’ve reached the end!
+                  </p>
+                )}
+              </>
             )}
           </section>
         </div>
@@ -63,18 +157,6 @@ export default function HomeClient({ session, posts, userId }: any) {
         <p className="text-lg text-red-400 font-medium text-center mt-12">
           Please sign in to view and create business ideas.
         </p>
-      )}
-
-      {/* Floating Button */}
-      {session && (
-        <motion.div
-          initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="fixed bottom-6 right-6"
-        >
-          
-        </motion.div>
       )}
     </main>
   );
