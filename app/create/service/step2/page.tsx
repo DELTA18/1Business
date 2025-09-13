@@ -26,11 +26,11 @@ export default function ProfessionStep2Form() {
       portfolio,
     });
 
-    router.push("/createpost/profession/review");
+    router.push("/create/service/review");
   };
 
   const handleBack = () => {
-    router.push("/createpost/profession/step1");
+    router.push("/create/service/step1");
   };
 
   return (

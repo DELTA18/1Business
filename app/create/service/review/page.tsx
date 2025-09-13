@@ -113,7 +113,7 @@ export default function ProfessionReviewPage() {
           <Button
             variant="outline"
             className="bg-white text-black hover:bg-gray-100 transition-all px-6 py-2 rounded-xl"
-            onClick={() => router.push("/createpost/profession/step2")}
+            onClick={() => router.push("/create/service/step2")}
           >
             ← Go Back
           </Button>

@@ -12,21 +12,21 @@ export default function CreatePostInitiator() {
       type: "Start your Business", 
       icon: <Rocket size={36} />, 
       desc: "Turn your idea into reality and get feedback from others.",
-      next: "/createpost/business/step1" 
+      next: "/create/businesspost/step1" 
     },
     { 
       id: 2, 
       type: "Share your Profession", 
       icon: <Briefcase size={36} />, 
       desc: "Show your skills and let people know what you do best.",
-      next: "/createpost/profession/step1" 
+      next: "/create/service/step1" 
     },
     { 
       id: 3, 
       type: "Share your Thing", 
       icon: <Lightbulb size={36} />, 
       desc: "Showcase your products, side hustles or unique creations.",
-      next: "/createpost/thing/step1" 
+      next: "/create/thing/step1" 
     },
   ];
 
@@ -39,11 +39,11 @@ export default function CreatePostInitiator() {
       {/* Header */}
       <div className="text-center space-y-3">
         <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-          Create a Post
+          Choose your creation type:
         </h1>
-        <p className="text-gray-400 text-lg">
+        {/* <p className="text-gray-400 text-lg">
           Select which type of post you want to create
-        </p>
+        </p> */}
       </div>
 
       {/* Post Type Cards */}

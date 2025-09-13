@@ -26,11 +26,11 @@ export default function Step2() {
       fundingRequired,
       fundingAmount,
     });
-    router.push('/createpost/business/step3');
+    router.push('/create/businesspost/step3');
   };
 
   const handleBack = () => {
-    router.push('/createpost/business/step1');
+    router.push('/create/businesspost/step1');
   };
 
   return (

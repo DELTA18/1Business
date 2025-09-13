@@ -30,7 +30,7 @@ export default function ProfessionStep1Form() {
       askingPrice: price,
     });
 
-    router.push("/createpost/profession/step2");
+    router.push("/create/service/step2");
   };
 
   return (
@@ -62,7 +62,7 @@ export default function ProfessionStep1Form() {
           <div className="space-y-2">
             <Label className="text-gray-300 text-sm">Service Title</Label>
             <Input
-              placeholder="Your name"
+              placeholder="e.g. Carpenter, Chef..."
               value={name}
               onChange={(e) => setName(e.target.value)}
               required

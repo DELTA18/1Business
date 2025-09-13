@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import CreatePost from "@/components/CreatePost";
+import Create from "@/components/Create";
 import BusinessPostDisplay from "@/components/BusinessPostDisplay";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
@@ -86,7 +86,7 @@ export default function HomeClient({ session }: any) {
       {session ? (
         <div className="w-full max-w-6xl mx-auto mt-12 space-y-12">
           <div className="bg-white/5 backdrop-blur-md rounded-2xl shadow p-6">
-            <CreatePost />
+            <Create />
           </div>
 
           {/* Posts */}

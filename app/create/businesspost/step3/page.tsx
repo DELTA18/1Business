@@ -139,7 +139,7 @@ export default function ReviewPostPage() {
           <Button
             variant="outline"
             className="bg-white text-black hover:bg-gray-100 transition-all px-6 py-2 rounded-xl"
-            onClick={() => router.push("/createpost/business/step2")}
+            onClick={() => router.push("/create/businesspost/step2")}
           >
             ← Go Back
           </Button>

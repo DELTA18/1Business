@@ -43,7 +43,7 @@ export default function BusinessStep1Form() {
       launchTimeline: timeline,
     });
 
-    router.push("/createpost/business/step2");
+    router.push("/create/businesspost/step2");
   };
 
   return (

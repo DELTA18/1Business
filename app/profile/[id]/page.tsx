@@ -169,9 +169,9 @@ export default function ProfilePage() {
   };
 
   const openCreate = (type: "post" | "service" | "asset") => {
-    if (type === "post") router.push("/createpost/business/step1");
-    if (type === "service") router.push("/createpost/profession/step1");
-    if (type === "asset") router.push("/createpost/asset/step1");
+    if (type === "post") router.push("/create/businesspost/step1");
+    if (type === "service") router.push("/create/service/step1");
+    if (type === "asset") router.push("/create/asset/step1");
   };
 
   // contributions heatmap helper
