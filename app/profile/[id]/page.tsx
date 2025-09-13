@@ -105,8 +105,9 @@ export default function ProfilePage() {
           setPosts(d.success ? d.posts : []);
         }
         if (activeTab === "services") {
-          const res = await fetch(`/api/services?googleId=${encodeURIComponent(profileId)}`);
+          const res = await fetch(`/api/service?googleId=${encodeURIComponent(profileId)}`);
           const d = await res.json();
+          console.log(d);
           setServices(d.success ? d.services : []);
         }
         if (activeTab === "assets") {
@@ -169,7 +170,7 @@ export default function ProfilePage() {
 
   const openCreate = (type: "post" | "service" | "asset") => {
     if (type === "post") router.push("/createpost/business/step1");
-    if (type === "service") router.push("/createpost/professional/step1");
+    if (type === "service") router.push("/createpost/profession/step1");
     if (type === "asset") router.push("/createpost/asset/step1");
   };
 
@@ -426,8 +427,9 @@ export default function ProfilePage() {
                   <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                     {services.map((s) => (
                       <div key={s._id} className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-                        <div className="font-semibold">{s.title}</div>
-                        <p className="text-sm text-zinc-400 mt-2 line-clamp-2">{s.description}</p>
+                        <div className="font-semibold">{s.name}</div>
+                        <p className="text-sm text-zinc-400 mt-2 line-clamp-4">{s.description}</p>
+                        <p className="mt-2 text-sm text-zinc-300">Price: ₹ {s.askingPrice}  - ({s.availability})</p>
                         <div className="mt-3 flex items-center justify-between">
                           <div className="text-sm text-zinc-400">{s.createdAt ? new Date(s.createdAt).toLocaleDateString() : ""}</div>
                           <div>

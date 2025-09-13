@@ -14,6 +14,13 @@ export default function ProfessionReviewPage() {
   const { data: session } = useSession();
   const userId = session?.user?.googleId || session?.user?.id;
 
+  const postData = {
+      userId,
+      ...step1Data,
+      ...step2Data,
+    };
+
+    console.log("Submitting post data:", postData);
 
   const handleSubmit = async () => {
     const postData = {
@@ -22,7 +29,9 @@ export default function ProfessionReviewPage() {
       ...step2Data,
     };
 
-    const res = await fetch("/api/posts/profession-posts", {
+    console.log("Submitting post data:", postData);
+
+    const res = await fetch("/api/service", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(postData),
@@ -36,6 +45,7 @@ export default function ProfessionReviewPage() {
     toast.success("Profession post submitted successfully!");
     reset();
     const result = await res.json();
+    console.log(result, "Response from server", result.success);
     result.success ? router.push("/") : router.push("/createpost/failure");
   };
 

@@ -60,7 +60,7 @@ export default function ProfessionStep1Form() {
 
           {/* Name */}
           <div className="space-y-2">
-            <Label className="text-gray-300 text-sm">Name</Label>
+            <Label className="text-gray-300 text-sm">Service Title</Label>
             <Input
               placeholder="Your name"
               value={name}

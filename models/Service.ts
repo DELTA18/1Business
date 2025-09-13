@@ -1,27 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
-const ServiceSchema = new mongoose.Schema({
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+const ServiceSchema = new Schema(
+  {
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    experience: { type: String, required: true },
+    type: { type: String, required: true },
+    askingPrice: { type: String, required: true },
 
-  // Core info
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  skills: [{ type: String }],
-
-  // Pricing
-  priceModel: { type: String, enum: ["fixed", "hourly"], required: true },
-  price: { type: Number, required: true },
-
-  // Basic meta
-  location: { type: String },
-  availability: {
-    type: String,
-    enum: ["available", "unavailable"],
-    default: "available",
+    experienceYears: { type: String, required: true },
+    availability: { type: String, required: true },
+    locations: { type: String, required: true },
+    portfolio: { type: String, required: true },
   },
+  { timestamps: true }
+);
 
-  createdAt: { type: Date, default: Date.now },
-});
+export const Service =
+  models.Service || model("Service", ServiceSchema);
 
-export default mongoose.models.Service ||
-  mongoose.model("Service", ServiceSchema);
