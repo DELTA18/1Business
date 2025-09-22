@@ -11,11 +11,24 @@ import remarkGfm from "remark-gfm";
 
 import { useSession } from "next-auth/react";
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+  profilePic?: string;
+  bio?: string;
+  phone?: string;
+  location?: string;
+  socialLinks?: string[];
+  accountTypes?: string[];
+}
+
 export default function ReviewPostPage() {
   const router = useRouter();
   const { step1Data, step2Data } = useBusinessPostStore();
   const { data: session } = useSession();
-  const userId = session?.user?.googleId || session?.user?.id;
+  const userId: string | undefined = session?.user?.id;
 
   if (!step1Data || !step2Data) {
     return (
@@ -26,6 +39,11 @@ export default function ReviewPostPage() {
   }
 
   const handleSubmit = async () => {
+    if (!userId) {
+      toast.error("User not authenticated.");
+      return;
+    }
+
     const postData = {
       userId,
       ...step1Data,
@@ -43,6 +61,7 @@ export default function ReviewPostPage() {
         toast.error("Failed to submit post. Please try again.");
         return;
       }
+
       const result = await res.json();
 
       if (result.success) {
@@ -54,7 +73,7 @@ export default function ReviewPostPage() {
       }
     } catch (e) {
       toast.error("Something went wrong. Please try again.");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -85,7 +104,7 @@ export default function ReviewPostPage() {
             <CardContent className="p-8 md:p-10 space-y-8">
               {/* Step 1 Info */}
               <div className="space-y-6">
-                <Detail title="Business Name" value={step1Data.name} />
+                <Detail title="Business Name" value={step1Data.name || ""} />
 
                 {/* Render Markdown Description */}
                 <div>
@@ -94,7 +113,7 @@ export default function ReviewPostPage() {
                   </h2>
                   <div className="prose prose-invert max-w-none prose-p:leading-relaxed prose-p:mb-0">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {step1Data.description}
+                      {step1Data.description || ""}
                     </ReactMarkdown>
                   </div>
                 </div>
@@ -102,9 +121,9 @@ export default function ReviewPostPage() {
 
               {/* Step 1 + Step 2 Details Grid */}
               <div className="grid md:grid-cols-2 gap-6 mt-6">
-                <Detail title="Business Type" value={step1Data.businessType} />
-                <Detail title="Stage" value={capitalize(step1Data.stage)} />
-                <Detail title="Launch Timeline" value={formatTimeline(step1Data.launchTimeline)} />
+                <Detail title="Business Type" value={step1Data.businessType || ""} />
+                <Detail title="Stage" value={capitalize(step1Data.stage || "")} />
+                <Detail title="Launch Timeline" value={formatTimeline(step1Data.launchTimeline || "")} />
                 <Detail title="Estimated Budget" value={`₹ ${formatNumber(step2Data.estimatedBudget)}`} />
                 <Detail title="Available Money" value={`₹ ${formatNumber(step2Data.availableMoney)}`} />
                 <Detail
@@ -156,7 +175,7 @@ export default function ReviewPostPage() {
   );
 }
 
-function Detail({ title, value }: { title: string; value: string }) {
+function Detail({ title, value }: { title: string; value: string | number }) {
   return (
     <div>
       <h2 className="text-lg font-semibold text-white/90">{title}</h2>
@@ -186,7 +205,7 @@ function formatTimeline(t: string) {
   }
 }
 
-function formatNumber(n: number | string) {
+function formatNumber(n: number | string | undefined) {
   if (!n) return "0";
   const num = typeof n === "string" ? Number(n) : n;
   return num.toLocaleString("en-IN");

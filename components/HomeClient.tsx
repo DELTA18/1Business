@@ -10,6 +10,16 @@ interface Post {
   _id: string;
   title: string;
   description: string;
+  name: string;
+  imageUrl: string;
+  businessType: string;
+  stage: string;
+  location: string;
+  contact: string;
+  launchTimeline: string;
+  estimatedBudget: number;
+  updatedAt: string;
+  // Add any other required fields from BusinessPost here
   [key: string]: unknown; // allow extra fields without using `any`
 }
 

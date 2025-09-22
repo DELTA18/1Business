@@ -12,7 +12,7 @@ export default function ProfessionReviewPage() {
   const router = useRouter();
   const { step1Data, step2Data, reset } = useProfessionPostStore();
   const { data: session } = useSession();
-  const userId = session?.user?.googleId || session?.user?.id;
+  const userId = session?.user?.id;
 
   const postData = {
       userId,

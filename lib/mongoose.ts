@@ -13,14 +13,10 @@ declare global {
   var mongoose: { conn: Mongoose | null; promise: Promise<Mongoose> | null } | undefined;
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+let cached = global.mongoose ?? (global.mongoose = { conn: null, promise: null });
 
 async function dbConnect() {
-  if (cached.conn) {
+  if (cached && cached.conn) {
     console.log("✅ Using cached MongoDB connection", MONGODB_URI);
     return cached.conn;
   }
@@ -28,7 +24,7 @@ async function dbConnect() {
   if (!cached.promise) {
     console.log("⏳ Connecting to MongoDB...");
     cached.promise = mongoose
-      .connect(MONGODB_URI, { bufferCommands: false })
+      .connect(MONGODB_URI as string, { bufferCommands: false })
       .then((mongoose) => {
         console.log("✅ New MongoDB connection established");
         return mongoose;

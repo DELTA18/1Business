@@ -4,12 +4,12 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useMemo } from "react";
+import { useMemo, ReactElement } from "react";
 import { Rocket, Wrench, Building2 } from "lucide-react";
 
 const rolePrompts: Record<
   string,
-  { title: string; desc: string; icon: JSX.Element; action: string; link: string }
+  { title: string; desc: string; icon: ReactElement; action: string; link: string }
 > = {
   "start-business": {
     title: "Create your first Business Post?",

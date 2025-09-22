@@ -2,6 +2,14 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
+
+// Extend the User type to include googleId
+declare module "next-auth" {
+  interface User {
+    googleId?: string;
+    registrationCompleted?: boolean;
+  }
+}
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,8 +47,8 @@ export default function RegisterOnboarding() {
     if (status === "loading") return;
     if(!session) router.push("/");
     if (session){
-      console.log(session.user.registrationCompleted, "session user registrationCompleted");
-      if (session.user.registrationCompleted) router.push("/");
+      console.log(session.user?.registrationCompleted, "session user registrationCompleted");
+      if (session.user?.registrationCompleted) router.push("/");
     }
     // don't auto-redirect if registrationCompleted — allow re-run of onboarding if needed
   }, [session, status, router]);
@@ -136,7 +144,7 @@ export default function RegisterOnboarding() {
   // role prompt mapping
   const rolePrompts: Record<
     string,
-    { title: string; desc: string; action: string; link: string; icon: JSX.Element }
+    { title: string; desc: string; action: string; link: string; icon: React.ReactNode }
   > = {
     "start-business": {
       title: "Create your first Business Post",

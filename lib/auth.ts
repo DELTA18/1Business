@@ -49,11 +49,11 @@ export const {
       return token;
     },
     async session({ session, token }) {
-      session.user.googleId = token.googleId;
-      session.user.name = token.name;
-      session.user.email = token.email;
-      session.user.image = token.image;
-      session.user.registrationCompleted = token.registrationCompleted;
+      session.user.googleId = token.googleId as string | undefined;
+      session.user.name = token.name as string | undefined;
+      session.user.email = token.email ?? "";
+      session.user.image = token.image as string | undefined;
+      session.user.registrationCompleted = token.registrationCompleted as boolean | undefined;
       return session;
     },
     async redirect({ baseUrl }) {

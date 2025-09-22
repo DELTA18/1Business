@@ -3,6 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import User from "@/models/User";
 
+type LeanUser = {
+  _id: string;
+  googleId: string;
+  accountTypes?: string[];
+};
+
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
@@ -20,9 +26,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // --- DEBUG: check if user exists before update ---
-    const before = await User.findOne({ googleId }).lean();
-    console.log("[FOUND_USER_BEFORE_UPDATE]", !!before, before ? { _id: before._id, googleId: before.googleId } : null);
+    // --- fetch user before update ---
+    const before = await User.findOne({ googleId }).lean<LeanUser>();
+    console.log(
+      "[FOUND_USER_BEFORE_UPDATE]",
+      !!before,
+      before ? { _id: before._id, googleId: before.googleId } : null
+    );
 
     if (!before) {
       return NextResponse.json(
@@ -31,14 +41,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Explicit $set + runValidators
+    // --- update accountTypes with runValidators ---
     const updated = await User.findOneAndUpdate(
       { googleId },
       { $set: { accountTypes } },
       { new: true, runValidators: true }
-    ).lean();
+    ).lean<LeanUser>();
 
-    console.log("[FOUND_USER_AFTER_UPDATE]", !!updated, updated ? { _id: updated._id, accountTypes: updated.accountTypes } : null);
+    console.log(
+      "[FOUND_USER_AFTER_UPDATE]",
+      !!updated,
+      updated ? { _id: updated._id, accountTypes: updated.accountTypes } : null
+    );
 
     if (!updated) {
       return NextResponse.json(

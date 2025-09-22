@@ -43,6 +43,11 @@ type Item = {
   imageUrl?: string;
   type?: "post" | "service" | "asset";
   createdAt?: string;
+  // For services
+  askingPrice?: number;
+  availability?: string;
+  // For services, some may have a name instead of title
+  name?: string;
 };
 
 export default function ProfilePage() {
@@ -70,7 +75,7 @@ export default function ProfilePage() {
   // ui states
   const [copied, setCopied] = useState(false);
   const [following, setFollowing] = useState(false);
-  const isOwner = useMemo(() => session?.user?.googleId === profileId, [session, profileId]);
+  const isOwner = useMemo(() => session?.user?.id === profileId, [session, profileId]);
 
   // --- fetch user ---
   useEffect(() => {
@@ -404,7 +409,7 @@ export default function ProfilePage() {
                     {posts.map((p) => (
                       <div key={p._id} className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 flex flex-col">
                         <div className="text-lg font-semibold">{p.title}</div>
-                        <p className="text-sm text-zinc-400 mt-2 line-clamp-3">{p.content}</p>
+                        <p className="text-sm text-zinc-400 mt-2 line-clamp-3">{p.description}</p>
                         <div className="mt-auto flex items-center justify-between pt-3">
                           <div className="text-xs text-zinc-500">{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ""}</div>
                           <div className="flex gap-2">
