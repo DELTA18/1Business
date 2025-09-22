@@ -25,8 +25,6 @@ export async function GET(req: Request) {
     try{
         await dbConnect();
         const services = await Service.find({userId}).sort({createdAt: -1});
-        console.log(services);
-
         return NextResponse.json({success: true, services: services}, {status:200});
 
     }

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
-import { ProfessionPost } from "@/models/ProfessionPost";
+import { ProfessionPost } from "@/models/Service";
 
 // CREATE a new Profession Post
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await req.json();  
     await dbConnect();
 
     const newPost = await ProfessionPost.create(body);

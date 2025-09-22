@@ -82,6 +82,7 @@ export default function ProfilePage() {
       try {
         const res = await fetch(`/api/users?googleId=${encodeURIComponent(profileId)}`);
         const data = await res.json();
+        console.log(data);
         if (!data?.success) throw new Error(data?.error || "User not found");
         setUser(data.user as UserType);
       } catch (err: any) {

@@ -62,12 +62,8 @@ const authOptions = {
       return session;
     },
 
-    async redirect({ baseUrl, token }) {
-      // ✅ Directly check token.registrationCompleted
-      if (token?.registrationCompleted === false) {
-        return `${baseUrl}/register/step1`;
-      }
-      return baseUrl; // existing user → home
+    async redirect({ baseUrl }) {
+      return `${baseUrl}/register/step1`;
     },
   },
 };

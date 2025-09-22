@@ -15,7 +15,7 @@ if (!cached) {
 
 async function dbConnect() {
   if (cached.conn) {
-    console.log("✅ Using cached MongoDB connection");
+    console.log("✅ Using cached MongoDB connection", MONGODB_URI);
     return cached.conn;
   }
 

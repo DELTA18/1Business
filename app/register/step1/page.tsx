@@ -37,7 +37,11 @@ export default function RegisterOnboarding() {
 
   useEffect(() => {
     if (status === "loading") return;
-    if (!session) router.push("/");
+    if(!session) router.push("/");
+    if (session){
+      console.log(session.user.registrationCompleted, "session user registrationCompleted");
+      if (session.user.registrationCompleted) router.push("/");
+    }
     // don't auto-redirect if registrationCompleted — allow re-run of onboarding if needed
   }, [session, status, router]);
 
