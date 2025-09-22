@@ -11,18 +11,7 @@ import remarkGfm from "remark-gfm";
 
 import { useSession } from "next-auth/react";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  image?: string;
-  profilePic?: string;
-  bio?: string;
-  phone?: string;
-  location?: string;
-  socialLinks?: string[];
-  accountTypes?: string[];
-}
+
 
 export default function ReviewPostPage() {
   const router = useRouter();

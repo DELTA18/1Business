@@ -13,7 +13,7 @@ declare global {
   var mongoose: { conn: Mongoose | null; promise: Promise<Mongoose> | null } | undefined;
 }
 
-let cached = global.mongoose ?? (global.mongoose = { conn: null, promise: null });
+const cached = global.mongoose ?? (global.mongoose = { conn: null, promise: null });
 
 async function dbConnect() {
   if (cached && cached.conn) {
