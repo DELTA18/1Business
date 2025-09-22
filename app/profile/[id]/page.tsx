@@ -143,8 +143,8 @@ export default function ProfilePage() {
         const cJson = await cRes.json();
         setPinned(pJson.success ? pJson.items : []);
         setContribs(cJson.success ? cJson.contribs || {} : {});
-      } catch (err) {
-        // ignore
+      } catch {
+        console.error("Failed to fetch pinned & contributions");
       }
     })();
   }, [profileId]);

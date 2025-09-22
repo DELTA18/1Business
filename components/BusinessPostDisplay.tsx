@@ -37,17 +37,35 @@ function getRelativeTime(updatedAt: string) {
   });
 }
 
-const BusinessPostDisplay = ({ post }: { post: any }) => {
+// ✅ Define a proper type for post
+export interface BusinessPost {
+  _id: string;
+  userId?: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  businessType: string;
+  stage: string;
+  launchTimeline: string;
+  estimatedBudget: number;
+  updatedAt: string;
+  likes?: string[];
+}
+
+const BusinessPostDisplay: React.FC<{ post: BusinessPost }> = ({ post }) => {
   const [userData, setUserData] = useState<{ name: string; image: string } | null>(null);
   const [like, setLike] = useState(0);
+
   useEffect(() => {
     if (post.likes) {
       setLike(post.likes.length);
     }
-  },[like]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const fetchUser = async () => {
-      if (!post.userId) return; // No user id
+      if (!post.userId) return;
       try {
         const res = await fetch(`/api/users/${post.userId}`);
         if (res.ok) {
@@ -83,7 +101,9 @@ const BusinessPostDisplay = ({ post }: { post: any }) => {
               src={userData.image}
               alt={userData.name}
               className="w-10 h-10 rounded-full border border-white/30 object-cover"
-              onClick={() => {window.location.href = `/profile/${post.userId}`}}
+              onClick={() => {
+                window.location.href = `/profile/${post.userId}`;
+              }}
               style={{ cursor: 'pointer' }}
             />
             <span className="text-white font-medium text-sm">{userData.name}</span>
@@ -107,9 +127,7 @@ const BusinessPostDisplay = ({ post }: { post: any }) => {
 
       {/* Description */}
       <p className="text-gray-300 text-sm mb-4 leading-relaxed line-clamp-4">
-        {post.description.length > 160
-          ? post.description.slice(0, 160) + '...'
-          : post.description}
+        {post.description.length > 160 ? post.description.slice(0, 160) + '...' : post.description}
       </p>
 
       {/* Tags */}
@@ -139,10 +157,14 @@ const BusinessPostDisplay = ({ post }: { post: any }) => {
 
         <div className="flex items-center gap-4">
           <button className="group relative flex items-center gap-1 text-gray-300 hover:text-rose-400 transition">
-            <Heart onClick={() => {
-              setLike(like === 1 ? 0 : 1);
-            }} size={18} className="group-hover:scale-110 transition-transform" />
-            <span className="text-xs">24</span>
+            <Heart
+              onClick={() => {
+                setLike(like === 1 ? 0 : 1);
+              }}
+              size={18}
+              className="group-hover:scale-110 transition-transform"
+            />
+            <span className="text-xs">{like}</span>
           </button>
           <button className="group relative flex items-center gap-1 text-gray-300 hover:text-blue-400 transition">
             <MessageCircle size={18} className="group-hover:scale-110 transition-transform" />
