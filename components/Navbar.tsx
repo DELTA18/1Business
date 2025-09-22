@@ -18,7 +18,6 @@ export default function Navbar() {
     { label: 'Contact', href: '/contact' },
   ]
 
-  const navSession = useSession()
   const proflink = session?.user ? `/profile/${session.user.googleId}` : '/profile'
 
   return (

@@ -85,9 +85,14 @@ export default function RegisterOnboarding() {
 
       // proceed to next step
       setStep(2);
-    } catch (err: any) {
-      console.error(err);
-      setError(err?.message || "Server error");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err);
+        setError(err.message);
+      } else {
+        console.error(err);
+        setError("Failed to load user");
+      }
     } finally {
       setLoading(false);
     }
@@ -110,9 +115,14 @@ export default function RegisterOnboarding() {
       if (!data.success) throw new Error(data.error || "Failed to save roles");
 
       setStep(3);
-    } catch (err: any) {
-      console.error(err);
-      setError(err?.message || "Server error");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err);
+        setError(err.message);
+      } else {
+        console.error(err);
+        setError("Failed to load user");
+      }
     } finally {
       setLoading(false);
     }

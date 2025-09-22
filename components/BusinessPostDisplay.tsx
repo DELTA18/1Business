@@ -37,11 +37,13 @@ function getRelativeTime(updatedAt: string) {
   });
 }
 
-const BusinessPostDisplay = ({ post }: any) => {
+const BusinessPostDisplay = ({ post }: { post: any }) => {
   const [userData, setUserData] = useState<{ name: string; image: string } | null>(null);
   const [like, setLike] = useState(0);
   useEffect(() => {
-    like == 1 ? console.log('Liked!') : console.log('Not liked');
+    if (post.likes) {
+      setLike(post.likes.length);
+    }
   },[like]);
   useEffect(() => {
     const fetchUser = async () => {

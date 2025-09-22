@@ -6,12 +6,27 @@ import BusinessPostDisplay from "@/components/BusinessPostDisplay";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
-export default function HomeClient({ session }: any) {
-  const [posts, setPosts] = useState<any[]>([]);
+interface Post {
+  _id: string;
+  title: string;
+  description: string;
+  [key: string]: unknown; // allow extra fields without using `any`
+}
+
+interface Session {
+  user?: {
+    id?: string;
+    name?: string;
+    email?: string;
+  };
+}
+
+export default function HomeClient({ session }: { session: Session | null }) {
+  const [posts, setPosts] = useState<Post[]>([]);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(false); // ✅ NEW: error state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   const LIMIT = 6;
@@ -32,7 +47,7 @@ export default function HomeClient({ session }: any) {
       }
     } catch (err) {
       console.error("Error fetching posts:", err);
-      setError(true); // ✅ mark error
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -98,7 +113,7 @@ export default function HomeClient({ session }: any) {
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {posts.map((post: any, index: number) => (
+                  {posts.map((post, index) => (
                     <motion.div
                       key={post._id}
                       initial={{ opacity: 0, y: 15 }}

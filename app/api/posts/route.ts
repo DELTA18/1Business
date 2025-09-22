@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "6", 10);
     const skip = parseInt(searchParams.get("skip") || "0", 10);
 
-    let query: any = {};
+    let query = {};
     if (googleId) {
       query = { userId: googleId }; // fetch only posts of that user
     }

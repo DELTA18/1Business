@@ -46,7 +46,13 @@ export default function ProfessionReviewPage() {
     reset();
     const result = await res.json();
     console.log(result, "Response from server", result.success);
-    result.success ? router.push("/") : router.push("/createpost/failure");
+
+    if (result.success) {
+      router.push("/");
+    } else {
+      router.push("/createpost/failure");
+}
+
   };
 
   if (!step1Data || !step2Data) {

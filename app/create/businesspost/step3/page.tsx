@@ -52,8 +52,9 @@ export default function ReviewPostPage() {
         toast.error("Failed to submit post. Please try again.");
         router.push("/createpost/failure");
       }
-    } catch (error) {
+    } catch (e) {
       toast.error("Something went wrong. Please try again.");
+      console.log(e);
     }
   };
 
