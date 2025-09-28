@@ -17,7 +17,7 @@ export default function ReviewPostPage() {
   const router = useRouter();
   const { step1Data, step2Data } = useBusinessPostStore();
   const { data: session } = useSession();
-  const userId: string | undefined = session?.user?.id;
+  const userId: string | undefined = session?.user?.googleId;
 
   if (!step1Data || !step2Data) {
     return (
