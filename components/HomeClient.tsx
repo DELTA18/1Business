@@ -26,10 +26,9 @@ interface Post {
 interface HomeClientProps {
   session: Session | null;
   posts: Post[];        // 👈 now matches what you pass in page.tsx
-  userId?: string;      // 👈 optional prop
 }
 
-export default function HomeClient({ session, posts: initialPosts, userId }: HomeClientProps) {
+export default function HomeClient({ session, posts: initialPosts}: HomeClientProps) {
   const [posts, setPosts] = useState<Post[]>(() => initialPosts || []);
   const [skip, setSkip] = useState(initialPosts?.length || 0);
   const [hasMore, setHasMore] = useState(true);

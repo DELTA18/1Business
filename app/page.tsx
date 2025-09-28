@@ -11,5 +11,5 @@ export default async function Home() {
   const data = await res.json();
   const posts = data.posts || [];
 
-  return <HomeClient session={session} posts={posts} userId={session?.user?.googleId} />;
+  return <HomeClient session={session} posts={posts} />;
 }
