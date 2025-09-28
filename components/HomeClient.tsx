@@ -1,5 +1,6 @@
 "use client";
 
+import { Session } from "next-auth";
 import { useEffect, useState, useRef, useCallback } from "react";
 import Create from "@/components/Create";
 import BusinessPostDisplay from "@/components/BusinessPostDisplay";
@@ -19,21 +20,18 @@ interface Post {
   launchTimeline: string;
   estimatedBudget: number;
   updatedAt: string;
-  // Add any other required fields from BusinessPost here
   [key: string]: unknown; // allow extra fields without using `any`
 }
 
-interface Session {
-  user?: {
-    id?: string;
-    name?: string;
-    email?: string;
-  };
+interface HomeClientProps {
+  session: Session | null;
+  posts: Post[];        // 👈 now matches what you pass in page.tsx
+  userId?: string;      // 👈 optional prop
 }
 
-export default function HomeClient({ session }: { session: Session | null }) {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [skip, setSkip] = useState(0);
+export default function HomeClient({ session, posts: initialPosts, userId }: HomeClientProps) {
+  const [posts, setPosts] = useState<Post[]>(() => initialPosts || []);
+  const [skip, setSkip] = useState(initialPosts?.length || 0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -62,12 +60,6 @@ export default function HomeClient({ session }: { session: Session | null }) {
       setLoading(false);
     }
   }, [skip, hasMore, loading]);
-
-  // initial load
-  useEffect(() => {
-    fetchPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // intersection observer for infinite scroll
   useEffect(() => {

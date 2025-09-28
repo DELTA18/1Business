@@ -1,10 +1,9 @@
-import { Session } from "next-auth";
 import { auth } from "@/lib/auth";
 import HomeClient from "@/components/HomeClient";
 
 export default async function Home() {
-  const session: Session | null = await auth();
-  console.log(session?.user?.googleId, "session user id");
+  const session = await auth(); // 👈 no explicit Session type
+  console.log('--------------------',session?.user?.googleId);
 
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
     cache: "no-store",
