@@ -1,12 +1,5 @@
-// /app/register/step1/page.tsx
-import React, { Suspense } from "react";
-import dynamic from "next/dynamic";
-
-// Dynamically import the client component to ensure it's client-only
-const RegisterOnboarding = dynamic(
-  () => import("./RegisterOnboarding"),
-  { ssr: false } // disable SSR to prevent prerender errors
-);
+import { Suspense } from "react";
+import RegisterOnboarding from "./RegisterOnboarding";
 
 export default function Page() {
   return (
